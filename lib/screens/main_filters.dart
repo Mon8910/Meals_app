@@ -1,64 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:mealapps/provider/filters_provideer.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-enum Filter {
-  glutenfree,
-  lactosefree,
-  vegetarian,
-  vegan,
 
-}
+class MainFilters extends ConsumerWidget {
+  const MainFilters({super.key});
+  
+  
 
-class MainFilters extends StatefulWidget {
-  const MainFilters({super.key,required this.currentstate});
-  final Map<Filter,bool> currentstate;
-  @override
-  State<MainFilters> createState() {
-    return _MainFiltersState();
-  }
-}
-
-class _MainFiltersState extends State<MainFilters> {
-  var _glutenfilters=false ;
-  var _lactosefilters=false;
-  var _vegetarian=false;
-  var _vegan=false;
-  @override
-  void initState() {
-   
-    super.initState();
-    _glutenfilters=widget.currentstate[Filter.glutenfree]!;
-    _lactosefilters=widget.currentstate[Filter.lactosefree]!;
-    _vegetarian=widget.currentstate[Filter.vegetarian]!;
-    _vegan=widget.currentstate[Filter.vegan]!;
-  }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,WidgetRef ref) {
+    final activefilter=ref.watch(filterprovider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Filters'),
       ),
-      body: WillPopScope(
-        onWillPop: ()async {
-          Navigator.of(context).pop({
-            Filter.glutenfree: _glutenfilters,
-            Filter.lactosefree:_lactosefilters,
-            Filter.vegetarian:_vegetarian,
-            Filter.vegan:_vegan
-          }
-          
-
-          );
-          return false ;
-        },
-        child: Column(
+      body:  Column(
           children: [
             SwitchListTile(
-              value: _glutenfilters,
+              value: activefilter[Filter.glutenfree]!,
               onChanged: (ischaked) {
-                setState(() {
-                  _glutenfilters=ischaked;
-                });
+                ref.read(filterprovider.notifier).onfilterprovider(Filter.glutenfree, ischaked);
+
+                
               },
               title: Text(
                 'Gluten-free',
@@ -78,11 +43,10 @@ class _MainFiltersState extends State<MainFilters> {
               contentPadding: const EdgeInsets.only(left: 34,right: 22),
             ),
             SwitchListTile(
-              value: _lactosefilters,
+              value: activefilter[Filter.lactosefree]!,
               onChanged: (ischaked) {
-                setState(() {
-                  _lactosefilters=ischaked;
-                });
+                ref.read(filterprovider.notifier).onfilterprovider(Filter.lactosefree, ischaked);
+                
               },
               title: Text(
                 'lactose-free',
@@ -102,11 +66,10 @@ class _MainFiltersState extends State<MainFilters> {
               contentPadding: const EdgeInsets.only(left: 34,right: 22),
             ),
             SwitchListTile(
-              value: _vegetarian,
+              value: activefilter[Filter.vegetarian]!,
               onChanged: (ischaked) {
-                setState(() {
-                  _vegetarian=ischaked;
-                });
+                ref.read(filterprovider.notifier).onfilterprovider(Filter.vegetarian, ischaked);
+                
               },
               title: Text(
                 'Vegetarian',
@@ -126,11 +89,10 @@ class _MainFiltersState extends State<MainFilters> {
               contentPadding: const EdgeInsets.only(left: 34,right: 22),
             ),
             SwitchListTile(
-              value: _vegan,
+              value: activefilter[Filter.vegan]!,
               onChanged: (ischaked) {
-                setState(() {
-                  _vegan=ischaked;
-                });
+                ref.read(filterprovider.notifier).onfilterprovider(Filter.vegan, ischaked);
+                
               },
               title: Text(
                 'vegan',
@@ -151,7 +113,7 @@ class _MainFiltersState extends State<MainFilters> {
             ),
           ],
         ),
-      ),
-    );
+      );
+    
   }
 }
